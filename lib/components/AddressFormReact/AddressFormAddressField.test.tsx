@@ -10,6 +10,7 @@ import { AddressFormContext, AddressFormContextType } from "./AddressFormContext
 // Mock the autocomplete, getPlace, and reverseGeocode functions
 vi.mock("../../utils/api", () => ({
   autocomplete: vi.fn(),
+  suggest: vi.fn(),
   getPlace: vi.fn(),
   reverseGeocode: vi.fn(),
 }));
@@ -223,7 +224,7 @@ describe("AddressFormAddressField", () => {
     await waitFor(() => {
       expect(mockSetData).toHaveBeenCalledWith(
         expect.objectContaining({
-          addressLineOne: "510 W Georgia St, Vancouver, BC",
+          addressLineOne: "510 W Georgia St",
           city: "Vancouver",
           postalCode: "V6B 1Z6",
           province: "BC",

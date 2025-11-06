@@ -364,4 +364,76 @@ describe("Typeahead Component", () => {
       expect(screen.queryByText("Address 1")).not.toBeInTheDocument();
     });
   });
+
+  it("should display street address for supported countries and full label for unsupported countries", async () => {
+    let currentValue = "";
+    const mockOnChange = vi.fn((newValue: string) => {
+      currentValue = newValue;
+    });
+    const mockOnSelect = vi.fn();
+
+    vi.mocked(api.autocomplete).mockResolvedValue({
+      ResultItems: [
+        {
+          PlaceId: "supported-country-place",
+          Title: "Santa Croce, Sestiere Santa Croce, 1332A, 30135 Venezia VE, Italia",
+          Address: { Label: "Santa Croce, Sestiere Santa Croce, 1332A, 30135 Venezia VE, Italia" },
+          PlaceType: "Street",
+        },
+      ],
+      PricingBucket: "bucket1",
+      $metadata: {},
+    });
+
+    vi.mocked(api.getPlace).mockResolvedValue({
+      Address: {
+        Label: "Santa Croce, Sestiere Santa Croce, 1332A, 30135 Venezia VE, Italia",
+        Country: { Code2: "IT", Name: "Italia" },
+        Region: { Name: "Veneto" },
+        Locality: "Venezia",
+        PostalCode: "30135",
+        AddressNumber: "1332A",
+        Street: "Santa Croce",
+      },
+      Position: [12.32681, 45.44152],
+      PlaceId: undefined,
+      PlaceType: undefined,
+      Title: undefined,
+      PricingBucket: undefined,
+      $metadata: {},
+    });
+
+    const TestComponent = () => (
+      <Typeahead apiName="autocomplete" value={currentValue} onChange={mockOnChange} onSelect={mockOnSelect} />
+    );
+
+    const { rerender } = renderWithProvider(<TestComponent />);
+    const input = screen.getByRole("combobox");
+
+    fireEvent.change(input, { target: { value: "Santa Croce" } });
+    currentValue = "Santa Croce";
+    rerender(<TestComponent />);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("Santa Croce, Sestiere Santa Croce, 1332A, 30135 Venezia VE, Italia"),
+      ).toBeInTheDocument();
+    });
+
+    const option = screen.getByRole("option", {
+      name: "Santa Croce, Sestiere Santa Croce, 1332A, 30135 Venezia VE, Italia",
+    });
+    await userEvent.click(option);
+
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenCalledWith("Santa Croce, Sestiere Santa Croce, 1332A, 30135 Venezia VE, Italia");
+      expect(mockOnSelect).toHaveBeenCalledWith({
+        addressLineOneField: "Santa Croce, Sestiere Santa Croce, 1332A, 30135 Venezia VE, Italia",
+        fullAddress: expect.objectContaining({
+          Country: { Code2: "IT", Name: "Italia" },
+        }),
+        position: [12.32681, 45.44152],
+      });
+    });
+  });
 });

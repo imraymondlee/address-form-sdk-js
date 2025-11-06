@@ -2,6 +2,7 @@ export interface Country {
   code: string;
   name: string;
   position?: number[];
+  supported?: boolean;
 }
 
 export const countries: Country[] = [
@@ -74,6 +75,7 @@ export const countries: Country[] = [
     code: "AU",
     name: "Australia",
     position: [149.1266, -35.3065],
+    supported: true,
   },
   {
     code: "AT",
@@ -203,6 +205,7 @@ export const countries: Country[] = [
     code: "CA",
     name: "Canada",
     position: [-75.69122, 45.42177],
+    supported: true,
   },
   {
     code: "IC",
@@ -383,6 +386,7 @@ export const countries: Country[] = [
     code: "FR",
     name: "France",
     position: [2.3414, 48.85717],
+    supported: true,
   },
   {
     code: "GF",
@@ -500,6 +504,7 @@ export const countries: Country[] = [
     code: "HK",
     name: "Hong Kong",
     position: [114.14774, 22.36022],
+    supported: true,
   },
   {
     code: "HU",
@@ -530,6 +535,7 @@ export const countries: Country[] = [
     code: "IE",
     name: "Ireland",
     position: [-6.24828, 53.34807],
+    supported: true,
   },
   {
     code: "IM",
@@ -790,6 +796,7 @@ export const countries: Country[] = [
     code: "NZ",
     name: "New Zealand",
     position: [174.77686, -41.28949],
+    supported: true,
   },
   {
     code: "NI",
@@ -869,6 +876,7 @@ export const countries: Country[] = [
     code: "PH",
     name: "Philippines",
     position: [120.98626, 14.60488],
+    supported: true,
   },
   {
     code: "PN",
@@ -999,6 +1007,7 @@ export const countries: Country[] = [
     code: "SG",
     name: "Singapore",
     position: [103.85238, 1.29087],
+    supported: true,
   },
   {
     code: "SX",
@@ -1158,11 +1167,13 @@ export const countries: Country[] = [
     code: "GB",
     name: "United Kingdom",
     position: [-0.12721, 51.50643],
+    supported: true,
   },
   {
     code: "US",
     name: "United States",
     position: [-77.03196, 38.89036],
+    supported: true,
   },
   {
     code: "UM",

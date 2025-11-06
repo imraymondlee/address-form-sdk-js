@@ -9,6 +9,7 @@ import { Input } from "../Input/index.tsx";
 import { LocateButton } from "../LocateButton";
 import { base, brandOption, brandOptionLink, currentLocation, info, input, option, options } from "./styles.css.ts";
 import { TypeaheadAPIInput, TypeaheadAPIName, TypeaheadResultItem, useTypeaheadQuery } from "./use-typeahead-query.ts";
+import { countries } from "../../data/countries.ts";
 
 export interface TypeaheadOutput {
   addressLineOneField?: string;
@@ -73,11 +74,17 @@ const APITypeahead = ({
     );
 
     const [lng, lat] = result.Position ?? [];
-    const addressLineOneOnly = [result.Address?.AddressNumber, result.Address?.Street].filter(Boolean).join(" ");
-    onChange((addressLineOneOnly || result.Address?.Label) ?? address.title);
 
+    const matchedCountry = countries.find((country) => country.code === result.Address?.Country?.Code2);
+    const addressLineOneFallback = result.Address?.Label || address.title;
+
+    const addressLineOneField = matchedCountry?.supported
+      ? [result.Address?.AddressNumber, result.Address?.Street].filter(Boolean).join(" ") || addressLineOneFallback
+      : addressLineOneFallback;
+
+    onChange(addressLineOneField);
     onSelect({
-      addressLineOneField: result.Address?.Label ?? "",
+      addressLineOneField,
       fullAddress: result.Address,
       position: result.Position ? [lng, lat] : undefined,
     });
