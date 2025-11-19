@@ -122,6 +122,7 @@ export function AddressForm({
     setFormState((state) => ({
       ...state,
       addressLineOne: value.addressLineOneField,
+      addressLineTwo: value.addressLineTwoField,
     }));
 
     // Only updating these fields if they're address information from API call
