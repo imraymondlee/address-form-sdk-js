@@ -1,10 +1,12 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { fireEvent, act, waitFor } from "@testing-library/react";
+import { fireEvent, act, waitFor, screen } from "@testing-library/react";
 import { render } from "./render";
+import { useNotificationStore } from "../../stores/notificationStore";
 
 describe("render", () => {
   beforeEach(() => {
     document.body.innerHTML = "";
+    useNotificationStore.getState().clearNotifications();
   });
 
   it("should throw error when form is not found", () => {
@@ -205,5 +207,28 @@ describe("render", () => {
     expect(city.value).toBe("");
     expect(province.value).toBe("");
     expect(postalCode.value).toBe("");
+  });
+
+  it("displays notification message when added to store", async () => {
+    document.body.innerHTML = '<form id="test-form"></form>';
+
+    act(() => {
+      render({
+        root: "#test-form",
+        apiKey: "test-key",
+        region: "us-east-1",
+      });
+    });
+
+    act(() => {
+      useNotificationStore.getState().addNotification({
+        message: "Test notification message",
+        type: "error",
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Test notification message")).toBeInTheDocument();
+    });
   });
 });

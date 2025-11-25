@@ -11,21 +11,23 @@
 
     <!-- Address Form HTML Example -->
 
-    <form id="amazon-location-address-form" class="aws-address-form aws-flex-row aws-flex-1">
-      <div class="aws-flex-column">
-        <input data-type="address-form" name="addressLineOne" data-show-current-location />
-        <input data-type="address-form" name="addressLineTwo" />
-        <input data-type="address-form" name="city" />
-        <input data-type="address-form" name="postalCode" />
-        <input data-type="address-form" name="province" />
-        <input data-type="address-form" name="country" />
-        <div class="aws-flex-row">
-          <button data-type="address-form" type="submit">Submit</button>
-          <button data-type="address-form" type="reset">Reset</button>
+    <div class="my-address-form">
+      <form id="amazon-location-address-form" class="aws-address-form aws-flex-row aws-flex-1">
+        <div class="aws-flex-column">
+          <input data-type="address-form" name="addressLineOne" data-show-current-location />
+          <input data-type="address-form" name="addressLineTwo" />
+          <input data-type="address-form" name="city" />
+          <input data-type="address-form" name="postalCode" />
+          <input data-type="address-form" name="province" />
+          <input data-type="address-form" name="country" />
+          <div class="aws-flex-row">
+            <button data-type="address-form" type="submit">Submit</button>
+            <button data-type="address-form" type="reset">Reset</button>
+          </div>
         </div>
-      </div>
-      <div data-type="address-form" data-map-style="Standard,Light"></div>
-    </form>
+        <div data-type="address-form" data-map-style="Standard,Light"></div>
+      </form>
+    </div>
 
     <script type="module">
       import * as AddressForm from "/lib/main-standalone.tsx";
@@ -40,5 +42,21 @@
         },
       });
     </script>
+
+    <style>
+      body {
+        background-color: #eee;
+        padding: 20px;
+      }
+
+      .my-address-form {
+        max-width: 800px;
+        min-width: 500px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+      }
+    </style>
   </body>
 </html>

@@ -1,11 +1,12 @@
-import { fireEvent, waitFor } from "@testing-library/react";
+import { fireEvent, waitFor, screen, act } from "@testing-library/react";
 import { useContext, useEffect } from "react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, beforeEach } from "vitest";
 import { renderWithProvider } from "../../test/utils";
 import { AddressForm } from "./AddressForm";
 import { AddressFormContext, AddressFormContextType, useAddressFormContext } from "./AddressFormContext";
 import { GeoPlacesClient, GetPlaceIntendedUse } from "@aws-sdk/client-geo-places";
 import * as api from "../../utils/api";
+import { useNotificationStore } from "../../stores/notificationStore";
 
 vi.mock("../../utils/api", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../utils/api")>();
@@ -29,6 +30,10 @@ const renderWithContext = (ui: React.ReactElement) => {
 };
 
 describe("AddressForm", () => {
+  beforeEach(() => {
+    useNotificationStore.getState().clearNotifications();
+  });
+
   it("renders form element", () => {
     renderWithContext(
       <AddressForm apiKey="test" region="us-east-1">
@@ -189,5 +194,24 @@ describe("AddressForm", () => {
 
     expect(data).toEqual({ placeId: "test-place-id" });
     expect(api.getPlace).not.toHaveBeenCalled();
+  });
+
+  it("displays notification message when added to store", async () => {
+    renderWithProvider(
+      <AddressForm apiKey="test" region="us-east-1">
+        <div />
+      </AddressForm>,
+    );
+
+    act(() => {
+      useNotificationStore.getState().addNotification({
+        message: "Test notification message",
+        type: "error",
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Test notification message")).toBeInTheDocument();
+    });
   });
 });
