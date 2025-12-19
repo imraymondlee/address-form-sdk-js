@@ -23,12 +23,21 @@ export const AddressFormMap: FunctionComponent<AddressFormMapProps> = ({
   const handleMapError = (error: unknown) => {
     if (error && typeof error === "object" && "error" in error) {
       const innerError = error.error as { status?: number };
+
       if (innerError?.status === 403) {
-        addNotification({
-          id: "map-permission-error",
-          type: "error",
-          message: "Map rendering is currently unavailable. Please contact support for assistance.",
-        });
+        addNotification(
+          {
+            id: "map-permission-error",
+            type: "error",
+            message: "Map rendering is currently unavailable.",
+          },
+          () => {
+            console.error(
+              "Map rendering failed: This is likely due to missing GetTile permissions in the API key configuration. See https://docs.aws.amazon.com/location/latest/developerguide/address-form-sdk.html#address-form-getting-started for API key setup instructions.",
+              error,
+            );
+          },
+        );
       }
     }
   };

@@ -10,7 +10,7 @@ export type Notification = {
 
 type NotificationStore = {
   notifications: Notification[];
-  addNotification: (notification: Omit<Notification, "id"> & { id?: string }) => void;
+  addNotification: (notification: Omit<Notification, "id"> & { id?: string }, onAdd?: () => void) => void;
   removeNotification: (id: string) => void;
   clearNotifications: () => void;
 };
@@ -18,13 +18,15 @@ type NotificationStore = {
 export const useNotificationStore = create<NotificationStore>((set) => ({
   notifications: [],
 
-  addNotification: (notification) => {
+  addNotification: (notification, onAdd) => {
     set((state) => {
       const id = notification.id ?? crypto.randomUUID();
 
       if (state.notifications.some((notification) => notification.id === id)) {
         return state;
       }
+
+      onAdd?.();
 
       return {
         notifications: [...state.notifications, { ...notification, id }],

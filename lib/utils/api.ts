@@ -79,25 +79,41 @@ const handleApiError = (error: unknown, id: string, description: string) => {
   const { addNotification } = useNotificationStore.getState();
   const verb = description.endsWith("s") ? "are" : "is";
 
+  const docsLink =
+    "https://docs.aws.amazon.com/location/latest/developerguide/address-form-sdk.html#address-form-getting-started";
+
   if (error && typeof error === "object" && "$metadata" in error) {
     const metadata = (error as { $metadata?: { httpStatusCode?: number } }).$metadata;
 
     if (metadata?.httpStatusCode === 403) {
-      addNotification({
-        id: `${id}-permission-error`,
-        type: "error",
-        message: `${description} ${verb} currently unavailable. Please contact support for assistance.`,
-      });
+      addNotification(
+        {
+          id: `${id}-permission-error`,
+          type: "error",
+          message: `${description} ${verb} currently unavailable.`,
+        },
+        () => {
+          console.error(
+            `${description} failed: This is likely due to insufficient API key permissions. See ${docsLink} for API key setup instructions.`,
+            error,
+          );
+        },
+      );
 
       throw error;
     }
   }
 
-  addNotification({
-    id: `${id}-unknown-error`,
-    message: `${description} ${verb} currently unavailable. Please contact support for assistance.`,
-    type: "error",
-  });
+  addNotification(
+    {
+      id: `${id}-unknown-error`,
+      message: `${description} ${verb} currently unavailable.`,
+      type: "error",
+    },
+    () => {
+      console.error(`${description} failed with unknown error. See ${docsLink} for troubleshooting.`, error);
+    },
+  );
 
   throw error;
 };
