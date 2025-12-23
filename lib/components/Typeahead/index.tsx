@@ -74,7 +74,11 @@ const APITypeahead = ({
     }
   }, [currentBiasPosition, queryClient]);
 
-  const { data = [], isLoading } = useTypeaheadQuery({
+  const {
+    data = [],
+    isLoading,
+    isError,
+  } = useTypeaheadQuery({
     client,
     apiName,
     apiInput: { QueryText: debouncedValue, MaxResults: 5, ...apiInput },
@@ -171,15 +175,21 @@ const APITypeahead = ({
             data-testid={`aws-typeahead-results-${apiName}`}
             modal={false}
           >
-            {isLoading && (
+            {isLoading && !isError && (
               <ComboboxOption value={null} className={clsx(info, "aws-typeahead-results__loading")} disabled>
                 Loading...
               </ComboboxOption>
             )}
 
-            {data.length === 0 && !isLoading && (
+            {data.length === 0 && !isLoading && !isError && (
               <ComboboxOption value={null} className={clsx(info, "aws-typeahead-results__no-results")} disabled>
-                No results
+                No results.
+              </ComboboxOption>
+            )}
+
+            {isError && (
+              <ComboboxOption value={null} className={clsx(info, "aws-typeahead-results__no-results")} disabled>
+                Unable to fetch results.
               </ComboboxOption>
             )}
 

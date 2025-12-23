@@ -17,6 +17,8 @@ import { AddressFormMap } from "./AddressFormMap";
 import { AddressFormProvider } from "./AddressFormProvider";
 import { AddressFormTextField } from "./AddressFormTextField";
 import { getBoolean, getString } from "./utils";
+import { NotificationContainer } from "../Notification";
+import { createPortal } from "react-dom";
 
 export interface RenderParams {
   root: string;
@@ -41,6 +43,14 @@ export const render = ({ root: selector, ...formProps }: RenderParams) => {
     );
   }
 
+  const formWrapper = document.createElement("div");
+
+  const notificationContainer = document.createElement("div");
+  formWrapper.appendChild(notificationContainer);
+
+  form.parentElement?.appendChild(formWrapper);
+  formWrapper.appendChild(form);
+
   const root = createRoot(ensureAddressFormRoot());
 
   root.render(
@@ -58,6 +68,7 @@ export const render = ({ root: selector, ...formProps }: RenderParams) => {
       >
         <FormEventHandler selector={selector} onSubmit={formProps.onSubmit} />
         <AddressFormAutofillHandler form={form} />
+        {createPortal(<NotificationContainer />, notificationContainer)}
 
         <ComponentInjector
           selector={selector}

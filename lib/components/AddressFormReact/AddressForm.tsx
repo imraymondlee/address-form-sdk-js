@@ -12,6 +12,7 @@ import { AddressFormTextField, AddressFormTextFieldProps } from "./AddressFormTe
 import * as styles from "./styles.css";
 import useAmazonLocationContext from "../../hooks/use-amazon-location-context";
 import { getPlace } from "../../utils/api";
+import { NotificationContainer } from "../Notification";
 
 export interface AddressFormData {
   placeId?: string;
@@ -112,6 +113,7 @@ const AddressFormContent: FunctionComponent<AddressFormContentProps> = ({ childr
 
   return (
     <form ref={formRef} className={clsx(styles.root, className)} {...rest} onSubmit={handleSubmit} onReset={resetData}>
+      <NotificationContainer />
       {isMounted && formRef.current && <AddressFormAutofillHandler form={formRef.current} />}
       <AddressFormFields>{children}</AddressFormFields>
     </form>
