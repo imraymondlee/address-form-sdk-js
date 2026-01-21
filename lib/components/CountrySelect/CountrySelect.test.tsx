@@ -299,4 +299,28 @@ describe("<CountrySelect>", () => {
     expect(input).toHaveAttribute("placeholder", "Choose a country");
     expect(input).toHaveClass("custom-country-select");
   });
+
+  it("filters countries by 2-letter code", async () => {
+    const mockOnChange = vi.fn();
+    render(<CountrySelect value={null} onChange={mockOnChange} />);
+
+    const input = screen.getByTestId("country-input");
+    await userEvent.type(input, "cg");
+
+    await waitFor(() => {
+      expect(screen.getByText("Congo")).toBeInTheDocument();
+    });
+  });
+
+  it("filters countries by 3-letter code", async () => {
+    const mockOnChange = vi.fn();
+    render(<CountrySelect value={null} onChange={mockOnChange} />);
+
+    const input = screen.getByTestId("country-input");
+    await userEvent.type(input, "usa");
+
+    await waitFor(() => {
+      expect(screen.getByText("United States")).toBeInTheDocument();
+    });
+  });
 });
