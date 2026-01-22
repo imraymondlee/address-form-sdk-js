@@ -47,9 +47,18 @@ export const CountrySelect = ({
   }, [value, countryOptions]);
 
   const filteredCountries = useMemo(() => {
-    return query.trim().length > 0
-      ? countryOptions.filter((country) => country.name.toLowerCase().includes(query.toLowerCase()))
-      : countryOptions;
+    if (query.trim().length === 0) {
+      return countryOptions;
+    }
+
+    const queryLowerCase = query.toLowerCase();
+
+    return countryOptions.filter(
+      (country) =>
+        country.name.toLowerCase().includes(queryLowerCase) ||
+        country.code.toLowerCase().includes(queryLowerCase) ||
+        country.code3?.toLowerCase().includes(queryLowerCase),
+    );
   }, [countryOptions, query]);
 
   const isSelected = (country: Country) => {
