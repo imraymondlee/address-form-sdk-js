@@ -356,6 +356,8 @@ export const Default: Story = {
         showCurrentCountryResultsOnly={args.showCurrentCountryResultsOnly}
         allowedCountries={args.allowedCountries}
         placeTypes={args.placeTypes}
+        initialMapCenter={[-123.113, 49.259]} // Vancouver, BC
+        initialMapZoom={10}
       >
         <Flex direction="row" flex>
           <Flex direction="column">
