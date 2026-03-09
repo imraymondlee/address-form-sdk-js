@@ -36,6 +36,8 @@
         root: "#amazon-location-address-form",
         apiKey: import.meta.env.VITE_APP_API_KEY,
         region: import.meta.env.VITE_APP_REGION,
+        initialMapCenter: [-123.113, 49.259], // Vancouver, BC
+        initialMapZoom: 10,
         onSubmit: async (getData) => {
           const data = await getData({ intendedUse: "SingleUse" });
           console.log(data);
