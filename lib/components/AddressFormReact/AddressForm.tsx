@@ -1,4 +1,9 @@
-import { Address, AutocompleteFilterPlaceType, type GetPlaceIntendedUse } from "@aws-sdk/client-geo-places";
+import {
+  Address,
+  AutocompleteFilterPlaceType,
+  GeoPlacesClient,
+  type GetPlaceIntendedUse,
+} from "@aws-sdk/client-geo-places";
 import clsx from "clsx";
 import { ComponentProps, FormEventHandler, FunctionComponent, ReactNode, useEffect, useRef, useState } from "react";
 import { AddressFormAddressField, AddressFormAddressFieldProps } from "./AddressFormAddressField";
@@ -28,8 +33,9 @@ export interface AddressFormData {
 }
 
 export interface AddressFormProps extends AddressFormContentProps {
-  apiKey: string;
+  apiKey?: string;
   region: string;
+  client?: GeoPlacesClient;
   language?: string;
   politicalView?: string;
   showCurrentCountryResultsOnly?: boolean;
@@ -49,6 +55,7 @@ interface ChildComponents {
 export const AddressForm: FunctionComponent<AddressFormProps> & ChildComponents = ({
   apiKey,
   region,
+  client,
   children,
   language,
   politicalView,
@@ -63,6 +70,7 @@ export const AddressForm: FunctionComponent<AddressFormProps> & ChildComponents 
     <AddressFormProvider
       apiKey={apiKey}
       region={region}
+      client={client}
       language={language}
       politicalView={politicalView}
       showCurrentCountryResultsOnly={showCurrentCountryResultsOnly}

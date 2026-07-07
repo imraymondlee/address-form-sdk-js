@@ -8,9 +8,9 @@ The Address Form SDK can be used within a React app or in a standalone HTML and 
 
 ### Prerequisites
 
-First you will need to have an Amazon Location Service API key containing the correct permissions to perform actions for the address form. Follow [this guide for how to create an API key](https://docs.aws.amazon.com/location/latest/developerguide/using-apikeys.html).
+You will need an API key with permission to call the actions listed below. Follow [this guide for how to create an API key](https://docs.aws.amazon.com/location/latest/developerguide/using-apikeys.html).
 
-The use of the Address Form will require the following actions to be allowed in the API key:
+The use of the Address Form will require the following actions to be allowed by your API key:
 
 | Action           | Purpose                                                     | Required When                                          |
 | ---------------- | ----------------------------------------------------------- | ------------------------------------------------------ |
@@ -93,7 +93,7 @@ export default function App() {
             </button>
           </Flex>
         </Flex>
-        <AddressFormMap mapStyle={["Standard", "Light"]} />
+        <AddressForm.Map mapStyle={["Standard", "Light"]} />
       </Flex>
     </AddressForm>
   );
@@ -187,7 +187,7 @@ Other countries are in Preview, where the `addressLineOne` field displays the co
 
 | Property                        | Type                            | Required | Default | Description                                                                                                                                                                                                                                  |
 | ------------------------------- | ------------------------------- | -------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `apiKey`                        | `string`                        | Yes      | -       | The Amazon Location Service API key used to authenticate requests                                                                                                                                                                            |
+| `apiKey`                        | `string`                        | Yes      | -       | The Amazon Location Service API key used to authenticate requests.                                                                                                                                                                           |
 | `region`                        | `string`                        | Yes      | -       | The AWS region where Amazon Location Service is called (e.g., "us-east-1")                                                                                                                                                                   |
 | `language`                      | `string`                        | No       | -       | [Language code](https://en.wikipedia.org/wiki/IETF_language_tag#List_of_common_primary_language_subtags) for localized address suggestions (e.g., "en", "es")                                                                                |
 | `politicalView`                 | `string`                        | No       | -       | Political view for address results, affecting disputed territories display                                                                                                                                                                   |
@@ -274,15 +274,13 @@ Primary address input with autofill functionality. See [Supported Countries](#su
 <button data-type="address-form" type="reset">Reset</button>
 ```
 
-### AddressFormMap
+### AddressForm.Map
 
 Map component for displaying and adjusting address location.
 
-**React:** Map component for displaying and adjusting address location. `<AddressFormMap mapStyle={...}>`
+**React:** Map component for displaying and adjusting address location. `<AddressForm.Map mapStyle={...}>`
 
 **HTML/JavaScript:** Map element for displaying and adjusting address location.`<div data-type="address-form" data-map-style="...">`
-
-#### Props
 
 #### Props
 

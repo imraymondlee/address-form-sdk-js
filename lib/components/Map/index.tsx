@@ -19,12 +19,18 @@ export interface MapProps extends Omit<MapLibreMapProps, "mapStyle"> {
   mapStyle: ExtendedMapStyle;
   politicalView?: string;
   showNavigationControl?: boolean;
+  /**
+   * Optional base URL for map tile requests. Overrides the default
+   * `https://maps.geo.{region}.amazonaws.com`. Used for custom or non-production endpoints.
+   */
+  mapsEndpointOverride?: string;
 }
 
 export function Map({
   mapStyle: extendedMapStyle = ["Standard", "Light"],
   politicalView,
   showNavigationControl = true,
+  mapsEndpointOverride,
   children,
   ...rest
 }: MapProps) {
@@ -32,7 +38,7 @@ export function Map({
 
   return (
     <MapLibreMap
-      mapStyle={getMapStyle(extendedMapStyle, region, apiKey, politicalView)}
+      mapStyle={getMapStyle(extendedMapStyle, region, apiKey, mapsEndpointOverride, politicalView)}
       validateStyle={false}
       style={{ width: "100%", height: "100%", borderRadius: 4 }}
       {...rest}
@@ -51,19 +57,42 @@ export function Map({
 const getMapStyle = (
   extendedMapStyle: ExtendedMapStyle,
   region: string,
-  apiKey: string,
+  apiKey: string | undefined,
+  mapsEndpointOverride: string | undefined,
   politicalView?: string,
 ): MapLibreMapProps["mapStyle"] => {
   if (Array.isArray(extendedMapStyle)) {
     const [mapStyle, colorScheme = "Light"] = extendedMapStyle;
-    let mapStyleDescriptor = `https://maps.geo.${region}.amazonaws.com/v2/styles/${mapStyle}/descriptor?key=${apiKey}`;
+    const baseUrl = mapsEndpointOverride || `https://maps.geo.${region}.amazonaws.com`;
+
+    if (apiKey) {
+      let mapStyleDescriptor = `${baseUrl}/v2/styles/${mapStyle}/descriptor?key=${apiKey}`;
+
+      if (colorScheme && (mapStyle === "Standard" || mapStyle === "Monochrome")) {
+        mapStyleDescriptor += `&color-scheme=${colorScheme}`;
+      }
+
+      if (politicalView) {
+        mapStyleDescriptor += `&political-view=${politicalView}`;
+      }
+
+      return mapStyleDescriptor;
+    }
+
+    // No apiKey: build real URL for consumer's transformRequest to sign.
+    let mapStyleDescriptor = `${baseUrl}/v2/styles/${mapStyle}/descriptor`;
+    const params: string[] = [];
 
     if (colorScheme && (mapStyle === "Standard" || mapStyle === "Monochrome")) {
-      mapStyleDescriptor += `&color-scheme=${colorScheme}`;
+      params.push(`color-scheme=${colorScheme}`);
     }
 
     if (politicalView) {
-      mapStyleDescriptor += `&political-view=${politicalView}`;
+      params.push(`political-view=${politicalView}`);
+    }
+
+    if (params.length > 0) {
+      mapStyleDescriptor += `?${params.join("&")}`;
     }
 
     return mapStyleDescriptor;

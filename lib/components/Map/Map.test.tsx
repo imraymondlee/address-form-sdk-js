@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { renderWithProvider } from "../../test/utils";
+import { renderWithProvider, renderWithoutApiKey } from "../../test/utils";
 import { Map } from "./index";
 
 vi.mock("react-map-gl/maplibre", () => {
@@ -103,10 +103,59 @@ describe("Map Component", () => {
     expect(mapComponent.getAttribute("data-mapstyle")).not.toContain("political-view");
   });
 
-  it("renders the Logo with Dark mode when mapStyle is geo URL with Dark color-scheme", () => {
-    renderWithProvider(<Map mapStyle="geo://Standard?color-scheme=Dark&variant=Default" />);
+  it("renders the Logo with Dark mode when mapStyle is a URL with Dark color-scheme", () => {
+    renderWithProvider(
+      <Map mapStyle="https://maps.geo.us-east-1.amazonaws.com/v2/styles/Standard/descriptor?color-scheme=Dark" />,
+    );
     const logo = screen.getByTestId("mock-logo");
     expect(logo).toBeInTheDocument();
     expect(logo).toHaveAttribute("data-mode", "Dark");
+  });
+
+  it("uses real URL with region when no apiKey is provided", () => {
+    renderWithoutApiKey(<Map mapStyle={["Standard", "Light"]} />);
+    const mapComponent = screen.getByTestId("mock-maplibre-map");
+    expect(mapComponent).toHaveAttribute(
+      "data-mapstyle",
+      "https://maps.geo.us-west-2.amazonaws.com/v2/styles/Standard/descriptor?color-scheme=Light",
+    );
+  });
+
+  it("uses real URL without color-scheme for Satellite when no apiKey", () => {
+    renderWithoutApiKey(<Map mapStyle={["Satellite", "Light"]} />);
+    const mapComponent = screen.getByTestId("mock-maplibre-map");
+    expect(mapComponent).toHaveAttribute(
+      "data-mapstyle",
+      "https://maps.geo.us-west-2.amazonaws.com/v2/styles/Satellite/descriptor",
+    );
+  });
+
+  it("includes politicalView in URL when no apiKey", () => {
+    renderWithoutApiKey(<Map mapStyle={["Standard", "Light"]} politicalView="IN" />);
+    const mapComponent = screen.getByTestId("mock-maplibre-map");
+    expect(mapComponent).toHaveAttribute(
+      "data-mapstyle",
+      "https://maps.geo.us-west-2.amazonaws.com/v2/styles/Standard/descriptor?color-scheme=Light&political-view=IN",
+    );
+  });
+
+  it("uses real URL with Dark color-scheme when no apiKey", () => {
+    renderWithoutApiKey(<Map mapStyle={["Monochrome", "Dark"]} />);
+    const mapComponent = screen.getByTestId("mock-maplibre-map");
+    expect(mapComponent).toHaveAttribute(
+      "data-mapstyle",
+      "https://maps.geo.us-west-2.amazonaws.com/v2/styles/Monochrome/descriptor?color-scheme=Dark",
+    );
+  });
+
+  it("uses mapsEndpointOverride as base URL when provided", () => {
+    renderWithoutApiKey(
+      <Map mapStyle={["Standard", "Light"]} mapsEndpointOverride="https://custom-maps.example.com" />,
+    );
+    const mapComponent = screen.getByTestId("mock-maplibre-map");
+    expect(mapComponent).toHaveAttribute(
+      "data-mapstyle",
+      "https://custom-maps.example.com/v2/styles/Standard/descriptor?color-scheme=Light",
+    );
   });
 });
